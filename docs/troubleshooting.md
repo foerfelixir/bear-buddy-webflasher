@@ -10,6 +10,8 @@ The CH32V003 is in standby and its SWIO pin is unavailable.
 
 SWIO activity extends the six-second window. Pressing a remote button again closes it immediately.
 
+The Bear-Buddy already has 10 kΩ pull-ups on both I²C lines. The SDA pull-up on IO5 is sufficient for SWIO, so a missing pull-up is not the cause on this board and no hardware modification is needed. Confirm that I²C is not enabled while SWIO is in use.
+
 ## Why constant scanning is optional
 
 Chip probing halts and resumes the core and keeps the debug window open. That is useful for an always-open configurator, but it is unnecessary for normal Detect/Program workflows and creates constant SWIO traffic. The toggle defaults off for that reason.

@@ -12,17 +12,17 @@ Hardware reference: [TomatoCube — Box 10 Bear-Buddy DIY Desk Companion](https:
 | Buzzer | IO10 | Onboard peripheral |
 | NeoPixel data | IO7 | 5×5 serpentine `NEO_GRB + NEO_KHZ800` |
 | IR receiver | IO21 | Idle high; carrier bursts pull low |
-| I²C SDA / SWIO | IO5 | Shared with the programmer link |
-| I²C SCL | IO6 | Not used by the SWIO bit-banger |
+| I²C SDA / SWIO | IO5 | Onboard 10 kΩ pull-up; shared with the programmer link |
+| I²C SCL | IO6 | Onboard 10 kΩ pull-up; not used by the SWIO bit-banger |
 
-Do not enable I²C and SWIO simultaneously. The source comment claiming these are separate peripherals is misleading: IO5 is explicitly shared.
+The Bear-Buddy already has 10 kΩ pull-ups on both I²C lines. The SDA pull-up on IO5 is sufficient for SWIO, so no external resistor or board modification is required. Do not enable I²C and SWIO simultaneously because IO5 is explicitly shared.
 
 ## SWIO connection
 
-- ESP32 IO5 → CH32V003 PD1 / SWIO.
-- Add a 10 kΩ pull-up to the SWIO line.
+- ESP32 IO5 / I²C SDA → CH32V003 PD1 / SWIO.
+- Use the existing onboard 10 kΩ SDA pull-up; no external pull-up is required.
 - Common ground is required.
-- The `R_GLITCH_HIGH` workaround is not enabled; the real pull-up is the supported configuration.
+- The `R_GLITCH_HIGH` workaround remains disabled because the onboard pull-up is already present.
 - SWIO transfers disable interrupts. IR reception and matrix updates are suppressed while a flash/read operation is active to avoid collecting a corrupted frame.
 
 ## Target remote pins

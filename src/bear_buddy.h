@@ -7,10 +7,11 @@
  * Pin map is fixed by the board (TomatoCube "Box 10 - Bear-Buddy DIY Desk
  * Companion"): LED IO3, button A IO9 (wired together with the BOOT strap
  * pin), button B IO4, buzzer IO10, NeoPixel matrix IO7, IR receiver IO21,
- * I2C SDA IO5 / SCL IO6. IO5 is also what this build bit-bangs SWIO on, so
- * none of these peripherals overlap the programmer link.
+ * I2C SDA IO5 / SCL IO6, both with onboard 10k pull-ups. IO5 is also what
+ * this build bit-bangs SWIO on, so I2C must not be enabled concurrently;
+ * the existing SDA pull-up needs no hardware modification.
  *
- * The one real conflict is UART0: on the ESP32-C3 its default pins are
+ * The UART0 conflict is separate: on the ESP32-C3 its default pins are
  * IO20/IO21, so enabling the debug terminal takes IO21 away from the IR
  * receiver. bbBegin() is told about that and leaves the receiver alone
  * rather than fighting the terminal for the pin.

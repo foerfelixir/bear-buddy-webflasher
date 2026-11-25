@@ -131,7 +131,7 @@ python -m esptool --chip esp32c3 --port COM11 --baud 921600 \
 
 The supported path is the Bear-Buddy IR page:
 
-1. Connect the target SWIO line to IO5 with the pull-up.
+1. Connect the target SWIO line to IO5 / I²C SDA. The onboard 10 kΩ pull-up is already present; no external resistor or board modification is required.
 2. Press a remote button to open the six-second debug window.
 3. Click **Program codes** for only the 64-byte config page, or **Flash firmware** for the complete 2112-byte image.
 

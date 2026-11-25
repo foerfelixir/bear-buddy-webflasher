@@ -151,8 +151,9 @@
         <div class="card">
           <h3>SWIO checklist</h3>
           <ul>
-            <li>Connect ESP32 IO5 to CH32V003 PD1 / SWIO.</li>
-            <li>Add a 10 kΩ pull-up and common ground.</li>
+            <li>Connect ESP32 IO5 / I²C SDA to CH32V003 PD1 / SWIO.</li>
+            <li>Use the onboard 10 kΩ SDA pull-up; no external resistor or board modification is required.</li>
+            <li>Connect common ground.</li>
             <li>Do not use I²C and SWIO at the same time; both use IO5.</li>
             <li>Press a remote button before Detect or Program.</li>
             <li>The target stays reachable for six seconds after wake.</li>

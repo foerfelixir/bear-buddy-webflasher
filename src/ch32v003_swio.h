@@ -31,11 +31,10 @@
 #define EnableISR portENABLE_INTERRUPTS
 #endif
 
-// This is a hacky thing, but if you are laaaaazzzyyyy and don't want to add a 10k
-// resistor, youcan do this.  It glitches the line high very, very briefly.  
-// Enable for when you don't have a 10k pull-upand are relying on the internal pull-up.
+// Optional upstream workaround for boards without an external 10k pull-up.
+// Bear-Buddy already has 10k pull-ups on both I2C lines, so this build leaves it disabled.
 // WARNING: If you set this, you should set the drive current to 5mA.
-// #define R_GLITCH_HIGH 
+// #define R_GLITCH_HIGH
 
 // You should interface to this file via these functions
 

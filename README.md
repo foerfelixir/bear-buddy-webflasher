@@ -30,7 +30,7 @@ This project turns the Bear-Buddy into a browser-based CH32V003J4M6 programmer a
 | IR receiver | IO21 |
 | Status LED | IO3 |
 
-SWIO and I²C SDA share IO5; do not use both at once. See [hardware.md](docs/hardware.md).
+SWIO and I²C SDA share IO5; do not use both at once. Both I²C lines already have onboard 10 kΩ pull-ups, so SWIO needs no external resistor or board modification. See [hardware.md](docs/hardware.md).
 
 ## Quick start
 

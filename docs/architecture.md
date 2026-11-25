@@ -25,7 +25,7 @@ The ESP32 is the programmer, web host, and IR receiver. The CH32V003 is only the
 - Filesystem: LittleFS mounted for the `/www/` UI.
 - Configuration: `/config.json`.
 - mDNS: `weblink.local` when mDNS works on the client network.
-- SWIO: single-wire debug on IO5, with a required external 10 kΩ pull-up.
+- SWIO: single-wire debug on IO5 using the onboard 10 kΩ I²C SDA pull-up; no external pull-up or board modification is required.
 - IR receiver: interrupt timestamps edges on IO21; decoding runs in the main loop.
 - Matrix: 5×5 serpentine WS2812 chain on IO7.
 
