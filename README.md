@@ -104,7 +104,7 @@ The bridge is based on [Subjective-Reality-Labs/WCH_WebLink](https://github.com/
 
 Original ESP32-S3 CH32V003 programmer reference: [Ishu1519/esp32s3-ch32-programmer](https://github.com/Ishu1519/esp32s3-ch32-programmer), an open-source one-wire SWIO programmer/debugger released under the MIT license. This Bear-Buddy adaptation targets the ESP32-C3 and uses the board's existing I²C SDA pull-up for SWIO.
 
-Special thanks to **TomatoCube** for creating the excellent Bear-Buddy hardware and publishing detailed tutorials and documentation in [Box 10 — Bear-Buddy DIY Desk Companion](https://github.com/TomatoCube18/Docs/tree/main/Box%2010%20-%20Bear-Buddy%20DIY%20Desk%20Companion).
+Special thanks to **TomatoCube** for designing the excellent Bear-Buddy hardware and publishing detailed tutorials and documentation in [Box 10 — Bear-Buddy DIY Desk Companion](https://github.com/TomatoCube18/Docs/tree/main/Box%2010%20-%20Bear-Buddy%20DIY%20Desk%20Companion).
 
 ## Private-release warning
 
