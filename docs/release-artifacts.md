@@ -1,6 +1,6 @@
 # Release artifacts and verification
 
-## Current private package
+## Current package
 
 | Artifact | Size | SHA-256 |
 |---|---:|---|
@@ -21,7 +21,7 @@
 | `firmware_@0x10000.bin` | `0x010000` |
 | `littlefs_@0x210000.bin` | `0x210000` |
 
-Gaps are filled with `0xFF`. The final image ends at `0x3F0000`, leaving the 64 KiB coredump partition untouched.
+Gaps are filled with `0xFF`. The final image ends at `0x3F0000`, leaving the 64 KiB coredump partition untouched. The merge tool replaces Windows build-user path prefixes with equal-length `PUBLIC_BUILD_PATH` placeholders so release images do not expose local usernames; image size and offsets are unchanged. It then recalculates the ESP32 application checksum and appended SHA-256 validation digest.
 
 ## Verification commands
 

@@ -1,8 +1,9 @@
 # Changelog
 
-## Unreleased — private repository package
+## Unreleased — public repository package
 
-- Added a complete private-repository documentation set and standalone documentation page.
+- Published the complete documentation set and standalone documentation page.
+- Sanitized Windows build-user paths in merged release images and replaced the v1.0.0 complete image.
 - Added the missing `no_ota.csv` partition definition.
 - Made the CH32V003 build and config-page test scripts independent of the original workspace path.
 - Added deterministic merged-image and artifact verification tools.

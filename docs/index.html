@@ -4,7 +4,7 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta name="color-scheme" content="dark">
-  <title>Bear-Buddy Web Flasher — Private Documentation</title>
+  <title>Bear-Buddy Web Flasher — Documentation</title>
   <style>
     :root {
       --bg: #101216;
@@ -35,8 +35,7 @@
     .lede { max-width: 780px; margin: 0; color: #b7c0ce; font-size: 18px; }
     .badges { display: flex; flex-wrap: wrap; gap: 9px; margin-top: 24px; }
     .badge { padding: 5px 11px; border: 1px solid var(--line); border-radius: 999px; background: #12151a; color: var(--muted); font: 600 12px var(--mono); }
-    .badge.private { color: var(--ok); border-color: #28563a; background: #12231a; }
-    .badge.unpublished { color: var(--warn); border-color: #5c4826; background: #241d12; }
+    .badge.public { color: var(--ok); border-color: #28563a; background: #12231a; }
     nav { position: sticky; top: 0; z-index: 5; border-bottom: 1px solid var(--line); background: rgba(16, 18, 22, .94); backdrop-filter: blur(12px); }
     nav .wrap { display: flex; gap: 20px; overflow-x: auto; padding: 13px 0; }
     nav a { color: var(--muted); font-size: 13px; font-weight: 650; white-space: nowrap; }
@@ -89,8 +88,8 @@
       <h1>Web Flasher &amp; IR Remote Configurator</h1>
       <p class="lede">A browser-hosted SWIO programmer, NEC/Samsung IR receiver, and three-button remote configurator for the TomatoCube Box 10 Bear-Buddy.</p>
       <div class="badges">
-        <span class="badge private">PRIVATE REPOSITORY</span>
-        <span class="badge unpublished">PAGES NOT PUBLISHED</span>
+        <span class="badge public">PUBLIC REPOSITORY</span>
+        <span class="badge">DOCUMENTATION ONLINE</span>
         <span class="badge">ESP32-C3</span>
         <span class="badge">CH32V003J4M6</span>
         <span class="badge">NEC / SAMSUNG</span>
@@ -127,7 +126,7 @@
         <div class="card"><div class="num">02 · Configure</div><h3>Per-button IR codes</h3><p>Edit, randomize, download, and program address, command, and protocol values without rebuilding.</p></div>
         <div class="card"><div class="num">03 · Receive</div><h3>NEC / Samsung RX</h3><p>Decode IR in the ESP32, push frames to the page, and show a one-pass matrix marquee.</p></div>
       </div>
-      <p class="muted" style="margin-top:14px">Detailed source notes: <a href="architecture.md">architecture.md</a> · <a href="../README.md">README</a></p>
+      <p class="muted" style="margin-top:14px">Detailed source notes: <a href="architecture.md">architecture.md</a> · <a href="https://github.com/foerfelixir/bear-buddy-webflasher/blob/main/README.md">README</a></p>
     </section>
 
     <section id="hardware">
@@ -250,8 +249,8 @@ node test_config_page.mjs</pre>
     <section id="artifacts">
       <h2>Release downloads</h2>
       <div class="downloads">
-        <div class="download"><strong>LittleFS web UI</strong><span>1,966,080 B · flash at 0x210000</span><a href="../build_output/webflasher/littlefs_@0x210000.bin">Download littlefs_@0x210000.bin</a></div>
-        <div class="download"><strong>CH32V003 target template</strong><span>2,112 B · firmware + blank config page</span><a href="../build_output/webflasher/ir_remote_template.bin">Download ir_remote_template.bin</a></div>
+        <div class="download"><strong>LittleFS web UI</strong><span>1,966,080 B · flash at 0x210000</span><a href="https://raw.githubusercontent.com/foerfelixir/bear-buddy-webflasher/main/build_output/webflasher/littlefs_@0x210000.bin">Download littlefs_@0x210000.bin</a></div>
+        <div class="download"><strong>CH32V003 target template</strong><span>2,112 B · firmware + blank config page</span><a href="https://raw.githubusercontent.com/foerfelixir/bear-buddy-webflasher/main/build_output/webflasher/ir_remote_template.bin">Download ir_remote_template.bin</a></div>
       </div>
       <div class="callout"><strong>Build the ESP32 image locally.</strong> The application and complete merged image are intentionally omitted because compiled firmware embeds Wi-Fi defaults. Follow <a href="build-and-flash.md">build-and-flash.md</a> to configure the access point and generate both binaries.</div>
       <p class="muted" style="margin-top:14px">Hashes and verification: <a href="release-artifacts.md">release-artifacts.md</a></p>
@@ -259,20 +258,20 @@ node test_config_page.mjs</pre>
 
     <section id="credits">
       <h2>Credits</h2>
-      <p>Programmer lineage: <a href="https://github.com/Subjective-Reality-Labs/WCH_WebLink">Subjective-Reality-Labs/WCH_WebLink</a>, with <a href="https://github.com/Ishu1519/esp32s3-ch32-programmer">Ishu1519's original ESP32-S3 CH32V003 SWIO programmer</a> as a technical reference. Both projects are MIT-licensed; the upstream license is retained in <a href="../LICENSE">LICENSE</a>.</p>
+      <p>Programmer lineage: <a href="https://github.com/Subjective-Reality-Labs/WCH_WebLink">Subjective-Reality-Labs/WCH_WebLink</a>, with <a href="https://github.com/Ishu1519/esp32s3-ch32-programmer">Ishu1519's original ESP32-S3 CH32V003 SWIO programmer</a> as a technical reference. Both projects are MIT-licensed; the upstream license is retained in <a href="https://github.com/foerfelixir/bear-buddy-webflasher/blob/main/LICENSE">LICENSE</a>.</p>
       <p>Special thanks to <strong>TomatoCube</strong> for designing the excellent Bear-Buddy hardware and publishing detailed tutorials and documentation in <a href="https://github.com/TomatoCube18/Docs/tree/main/Box%2010%20-%20Bear-Buddy%20DIY%20Desk%20Companion">Box 10 — Bear-Buddy DIY Desk Companion</a>.</p>
     </section>
 
     <section id="security">
-      <h2>Private by design</h2>
-      <div class="callout warn"><strong>Not published.</strong> This repository is private and this documentation page has not been enabled through GitHub Pages.</div>
-      <p>No deployment Wi-Fi credentials are stored in current source, documentation, or checked-in binaries. The source uses generic setup placeholders, and ESP32 application/merged images are generated locally. Replace the placeholders before deployment and review repository history before any public release. The device has no authentication and should remain on a trusted local network.</p>
-      <p><a href="../SECURITY.md">Read the security and publication checklist</a>.</p>
+      <h2>Device security</h2>
+      <div class="callout warn"><strong>Trusted local network only.</strong> The device has no authentication or HTTPS. Do not expose its web server, programming, or erase endpoints directly to the internet.</div>
+      <p>No deployment Wi-Fi credentials are stored in current source, documentation, or checked-in binaries. The source uses generic setup placeholders, and ESP32 application/merged images are generated locally. Replace the placeholders before deployment.</p>
+      <p><a href="https://github.com/foerfelixir/bear-buddy-webflasher/blob/main/SECURITY.md">Read the security and deployment guidance</a>.</p>
     </section>
   </main>
 
   <footer>
-    <div class="wrap">Bear-Buddy Web Flasher · Private documentation · Based on Subjective-Reality-Labs/WCH_WebLink · MIT license retained in <a href="../LICENSE">LICENSE</a>.</div>
+    <div class="wrap">Bear-Buddy Web Flasher · Public documentation · Based on Subjective-Reality-Labs/WCH_WebLink · MIT license retained in <a href="https://github.com/foerfelixir/bear-buddy-webflasher/blob/main/LICENSE">LICENSE</a>.</div>
   </footer>
 </body>
 </html>

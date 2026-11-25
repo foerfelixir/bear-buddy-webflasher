@@ -1,8 +1,8 @@
 # Bear-Buddy Web Flasher
 
-Private ESP32-C3 / CH32V003 development repository for the TomatoCube **Box 10 Bear-Buddy** board.
+ESP32-C3 / CH32V003 development repository for the TomatoCube **Box 10 Bear-Buddy** board.
 
-**Repository status:** private. The documentation site in [`docs/index.html`](docs/index.html) is prepared but **GitHub Pages is not published**.
+**Repository status:** public. Read the [documentation site](https://foerfelixir.github.io/bear-buddy-webflasher/) or open [`docs/index.html`](docs/index.html) locally.
 
 This project turns the Bear-Buddy into a browser-based CH32V003J4M6 programmer and IR remote configurator. The ESP32-C3 hosts the web UI, bit-bangs SWIO, receives NEC / extended-NEC / Samsung IR, and drives the onboard 5×5 NeoPixel matrix. The CH32V003 target firmware transmits a separately configurable NEC or Samsung code for each of its three buttons.
 
@@ -51,7 +51,7 @@ SWIO and I²C SDA share IO5; do not use both at once. Both I²C lines already ha
 
 The ESP32 application and merged image are distributed as GitHub release assets rather than checked into Git because compiled firmware embeds Wi-Fi defaults. The complete image is 4,128,768 bytes and ends at `0x3F0000`; the final 64 KiB coredump region is left untouched.
 
-SHA-256 for `WCH_WebLink_ALL_at_0x0.bin`: `0dad3e5b4bb3dca567491f29ad059f6da406ba595ca5661fb0c3b37596b5ebb9`.
+SHA-256 for `WCH_WebLink_ALL_at_0x0.bin`: `a9336a9e48edbdd71226cf694d8fcdac3c972fadb97f89b55fc9440287b5e756`.
 
 ### Generic release access point
 
@@ -96,7 +96,7 @@ For a no-install browser option, download the release image above or build the m
 - [Release artifacts and verification](docs/release-artifacts.md)
 - [Security and publication status](SECURITY.md)
 
-A standalone documentation page is available at [docs/index.html](docs/index.html). It is intentionally not connected to GitHub Pages yet.
+The standalone documentation page is published at [foerfelixir.github.io/bear-buddy-webflasher](https://foerfelixir.github.io/bear-buddy-webflasher/). Its source is [`docs/index.html`](docs/index.html).
 
 ## Attribution and license
 
@@ -106,6 +106,6 @@ Original ESP32-S3 CH32V003 programmer reference: [Ishu1519/esp32s3-ch32-programm
 
 Special thanks to **TomatoCube** for designing the excellent Bear-Buddy hardware and publishing detailed tutorials and documentation in [Box 10 — Bear-Buddy DIY Desk Companion](https://github.com/TomatoCube18/Docs/tree/main/Box%2010%20-%20Bear-Buddy%20DIY%20Desk%20Companion).
 
-## Private-release warning
+## Security warning
 
-Current source, documentation, and checked-in binaries contain no deployment Wi-Fi credentials. The source uses generic setup-AP placeholders, and credential-bearing ESP32 application/merged images are built locally. Replace the placeholders before deployment and review Git history before any public release. The device UI has no authentication and is intended for a trusted local network only.
+Current source, documentation, and checked-in binaries contain no deployment Wi-Fi credentials. The source uses generic setup-AP placeholders, and credential-bearing ESP32 application/merged images are built locally. Replace the placeholders before deployment. The device UI has no authentication and is intended for a trusted local network only.

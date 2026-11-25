@@ -7,6 +7,8 @@ import hashlib
 import subprocess
 from pathlib import Path
 
+from merge_webflasher import sanitize_part, sanitize_windows_paths
+
 ROOT = Path(__file__).resolve().parent.parent
 OUT = ROOT / "build_output" / "webflasher"
 PARTS = [
@@ -23,6 +25,13 @@ def digest(data: bytes) -> str:
 
 
 def main() -> int:
+    for sample in (b"C:/Users/BuildUser/project", b"C:\\Users\\BuildUser\\project"):
+        sanitized = sanitize_windows_paths(sample)
+        assert len(sanitized) == len(sample), "path sanitizer changed the image layout"
+        assert b"BuildUser" not in sanitized, "path sanitizer left a user name behind"
+        assert sanitized.startswith(b"PUBLIC_BUILD_PATH"), "path sanitizer placeholder is missing"
+    print("PASS Windows build-path sanitizer")
+
     app = OUT / "firmware_@0x10000.bin"
     merged_path = OUT / "WCH_WebLink_ALL_at_0x0.bin"
     if not app.exists() and not merged_path.exists():
@@ -38,7 +47,7 @@ def main() -> int:
         end = 0
         for name, offset in PARTS:
             data = (OUT / name).read_bytes()
-            assert merged[offset : offset + len(data)] == data, f"{name} differs from merged image"
+            assert merged[offset : offset + len(data)] == sanitize_part(name, data), f"{name} differs from merged image"
             end = max(end, offset + len(data))
             print(f"PASS {name}: embedded at 0x{offset:06X}")
         assert merged[end:] == b"\xFF" * (len(merged) - end), "image tail is not erased fill"
