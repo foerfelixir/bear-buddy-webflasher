@@ -34,7 +34,7 @@ SWIO and I²C SDA share IO5; do not use both at once. Both I²C lines already ha
 
 ## Quick start
 
-1. Set `HOTSPOT_NAME` and `HOTSPOT_PASSWORD` in `src/SRLConfig.h`, build and flash the ESP32 image, then connect to the access point you configured.
+1. Flash the [v1.0.0 complete ESP32-C3 image](https://github.com/foerfelixir/bear-buddy-webflasher/releases/download/v1.0.0/WCH_WebLink_ALL_at_0x0.bin) at offset `0x0`, or set `HOTSPOT_NAME` and `HOTSPOT_PASSWORD` in `src/SRLConfig.h` and build your own image.
 2. Open `http://192.168.4.1/` for the programmer or `http://192.168.4.1/ir.html` for the IR configurator.
 3. On the IR page, select each button, edit or randomize its code, choose NEC or Samsung, then program.
 4. The target is asleep in standby. Press any button on the remote immediately before **Detect chip** or **Program codes**. Its SWIO window stays open for six seconds and is extended by SWIO activity.
@@ -44,11 +44,24 @@ SWIO and I²C SDA share IO5; do not use both at once. Both I²C lines already ha
 
 | File | Purpose | Flash offset |
 |---|---|---:|
+| [`WCH_WebLink_ALL_at_0x0.bin`](https://github.com/foerfelixir/bear-buddy-webflasher/releases/download/v1.0.0/WCH_WebLink_ALL_at_0x0.bin) | Complete v1.0.0 ESP32-C3 image with generic Wi-Fi defaults | `0x0` |
 | [`build_output/webflasher/littlefs_@0x210000.bin`](build_output/webflasher/littlefs_@0x210000.bin) | Web UI / LittleFS only | `0x210000` |
 | [`build_output/webflasher/ir_remote_template.bin`](build_output/webflasher/ir_remote_template.bin) | CH32V003 firmware plus blank 64-byte config page | target `0x08000000` |
 | [`ch32v003-firmware/build/ir_remote.bin`](ch32v003-firmware/build/ir_remote.bin) | CH32V003 firmware only | target `0x08000000` |
 
-The ESP32 application and merged image are intentionally not checked in because compiled firmware embeds the Wi-Fi defaults. Build them locally after setting your access-point values. The generated merged image is 4,128,768 bytes and ends at `0x3F0000`; the final 64 KiB coredump region is left untouched.
+The ESP32 application and merged image are distributed as GitHub release assets rather than checked into Git because compiled firmware embeds Wi-Fi defaults. The complete image is 4,128,768 bytes and ends at `0x3F0000`; the final 64 KiB coredump region is left untouched.
+
+SHA-256 for `WCH_WebLink_ALL_at_0x0.bin`: `0dad3e5b4bb3dca567491f29ad059f6da406ba595ca5661fb0c3b37596b5ebb9`.
+
+### Generic release access point
+
+The prebuilt v1.0.0 image starts a setup access point with these generic defaults:
+
+| SSID | Password |
+|---|---|
+| `WCH_WebLink-Setup` | `changeme123` |
+
+Change these values in `src/SRLConfig.h` and rebuild before deployment. Flashing the complete image clears saved device configuration.
 
 ## Build
 
@@ -70,7 +83,7 @@ python -m platformio run -e esp32-c3-devkitc-02 -t buildfs
 
 See [build-and-flash.md](docs/build-and-flash.md) for complete build, merge, verification, and flash commands.
 
-For a no-install browser option, build the merged image locally and flash it at offset `0x0` with [Adafruit WebSerial ESPTool](https://adafruit.github.io/Adafruit_WebSerial_ESPTool/). This requires a Web Serial-capable browser and clears saved device configuration during a full erase/program.
+For a no-install browser option, download the release image above or build the merged image locally, then flash it at offset `0x0` with [Adafruit WebSerial ESPTool](https://adafruit.github.io/Adafruit_WebSerial_ESPTool/). This requires a Web Serial-capable browser and clears saved device configuration during a full erase/program.
 
 ## Documentation
 
