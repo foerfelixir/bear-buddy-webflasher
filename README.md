@@ -89,7 +89,9 @@ A standalone documentation page is available at [docs/index.html](docs/index.htm
 
 The bridge is based on [Subjective-Reality-Labs/WCH_WebLink](https://github.com/Subjective-Reality-Labs/WCH_WebLink), which in turn credits cnlohr's `ch32v003fun` minichlink and ESP32 programmer work. The original MIT license is retained in [LICENSE](LICENSE).
 
-Bear-Buddy hardware and wiring references are credited to [TomatoCube's Box 10 Bear-Buddy documentation](https://github.com/TomatoCube18/Docs/tree/main/Box%2010%20-%20Bear-Buddy%20DIY%20Desk%20Companion).
+Original ESP32-S3 CH32V003 programmer reference: [Ishu1519/esp32s3-ch32-programmer](https://github.com/Ishu1519/esp32s3-ch32-programmer), an open-source one-wire SWIO programmer/debugger released under the MIT license. This Bear-Buddy adaptation targets the ESP32-C3 and uses the board's existing I²C SDA pull-up for SWIO.
+
+Special thanks to **TomatoCube** for creating the excellent Bear-Buddy hardware and publishing detailed tutorials and documentation in [Box 10 — Bear-Buddy DIY Desk Companion](https://github.com/TomatoCube18/Docs/tree/main/Box%2010%20-%20Bear-Buddy%20DIY%20Desk%20Companion).
 
 ## Private-release warning
 

@@ -9,7 +9,8 @@
 - Replaced real access-point defaults with generic placeholders and removed credential-bearing ESP32 application/merged images.
 - Documented how to configure Wi-Fi and rebuild the omitted ESP32 binaries locally.
 - Preserved the web UI, CH32V003 firmware, and non-credential release parts.
-- Added TomatoCube credit and a link to the Box 10 Bear-Buddy hardware documentation.
+- Added TomatoCube credit for the Bear-Buddy hardware, detailed tutorials, and hardware documentation.
+- Added Ishu1519's ESP32-S3 CH32V003 SWIO programmer as an original technical reference.
 - Documented browser-based ESP32 flashing with Adafruit WebSerial ESPTool.
 - Clarified that the onboard 10 kΩ I²C pull-ups support SWIO without hardware modification.
 
