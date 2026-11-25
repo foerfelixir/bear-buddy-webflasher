@@ -87,6 +87,8 @@ A standalone documentation page is available at [docs/index.html](docs/index.htm
 
 The bridge is based on [Subjective-Reality-Labs/WCH_WebLink](https://github.com/Subjective-Reality-Labs/WCH_WebLink), which in turn credits cnlohr's `ch32v003fun` minichlink and ESP32 programmer work. The original MIT license is retained in [LICENSE](LICENSE).
 
+Bear-Buddy hardware and wiring references are credited to [TomatoCube's Box 10 Bear-Buddy documentation](https://github.com/TomatoCube18/Docs/tree/main/Box%2010%20-%20Bear-Buddy%20DIY%20Desk%20Companion).
+
 ## Private-release warning
 
 Current source, documentation, and checked-in binaries contain no deployment Wi-Fi credentials. The source uses generic setup-AP placeholders, and credential-bearing ESP32 application/merged images are built locally. Replace the placeholders before deployment and review Git history before any public release. The device UI has no authentication and is intended for a trusted local network only.

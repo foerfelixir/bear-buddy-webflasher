@@ -1,5 +1,7 @@
 # Hardware and wiring
 
+Hardware reference: [TomatoCube — Box 10 Bear-Buddy DIY Desk Companion](https://github.com/TomatoCube18/Docs/tree/main/Box%2010%20-%20Bear-Buddy%20DIY%20Desk%20Companion).
+
 ## Bear-Buddy pin map
 
 | Function | ESP32-C3 pin | Notes |
