@@ -70,6 +70,8 @@ python -m platformio run -e esp32-c3-devkitc-02 -t buildfs
 
 See [build-and-flash.md](docs/build-and-flash.md) for complete build, merge, verification, and flash commands.
 
+For a no-install browser option, build the merged image locally and flash it at offset `0x0` with [Adafruit WebSerial ESPTool](https://adafruit.github.io/Adafruit_WebSerial_ESPTool/). This requires a Web Serial-capable browser and clears saved device configuration during a full erase/program.
+
 ## Documentation
 
 - [Architecture](docs/architecture.md)

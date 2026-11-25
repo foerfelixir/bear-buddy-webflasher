@@ -87,9 +87,21 @@ It fills gaps with `0xFF`, checks region sizes, and writes `WCH_WebLink_ALL_at_0
 
 ## Flash the ESP32-C3
 
-Replace `COM11` with the actual serial port.
+### Browser flash with Adafruit WebSerial ESPTool
 
-### Complete image
+Use this method when Python or `esptool` is not installed. Build `build_output/webflasher/WCH_WebLink_ALL_at_0x0.bin` locally first; it is intentionally not checked in.
+
+1. Open [Adafruit WebSerial ESPTool](https://adafruit.github.io/Adafruit_WebSerial_ESPTool/) in a Web Serial-capable browser. The tool currently lists Chrome 89+ or Firefox 151+.
+2. Connect the Bear-Buddy by USB and close any serial monitor, PlatformIO monitor, or IDE serial session using the port.
+3. Click **Connect** and select the ESP32-C3 serial port. Use `921600` baud if the tool exposes a baud control.
+4. Set the offset to `0x0`, choose `WCH_WebLink_ALL_at_0x0.bin`, and start the erase/program operation.
+5. Wait for the write and verification to finish, reset the board if needed, then connect to the access point configured in `src/SRLConfig.h`.
+
+A full erase/program clears saved device configuration. If the board does not enter download mode automatically, hold **BOOT** (Button A), tap **RESET**, release **BOOT**, and retry the connection.
+
+### Command-line complete image
+
+Replace `COM11` with the actual serial port.
 
 ```sh
 python -m esptool --chip esp32c3 --port COM11 --baud 921600 \

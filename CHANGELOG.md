@@ -10,6 +10,7 @@
 - Documented how to configure Wi-Fi and rebuild the omitted ESP32 binaries locally.
 - Preserved the web UI, CH32V003 firmware, and non-credential release parts.
 - Added TomatoCube credit and a link to the Box 10 Bear-Buddy hardware documentation.
+- Documented browser-based ESP32 flashing with Adafruit WebSerial ESPTool.
 
 ## Bear-Buddy feature set
 

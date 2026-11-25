@@ -181,7 +181,15 @@ python tools/verify_artifacts.py</pre>
       <pre>cd ch32v003-firmware
 TOOLCHAIN_DIR=/path/to/xpack-riscv-none-elf-gcc-15.2.0-1/bin sh build.sh
 node test_config_page.mjs</pre>
-      <h3>Flash the complete Bear-Buddy image</h3>
+      <h3>Browser flash with Adafruit WebSerial</h3>
+      <ol>
+        <li>Build <code>WCH_WebLink_ALL_at_0x0.bin</code> locally first.</li>
+        <li>Open <a href="https://adafruit.github.io/Adafruit_WebSerial_ESPTool/">Adafruit WebSerial ESPTool</a> in a Web Serial-capable browser.</li>
+        <li>Connect to the ESP32-C3 USB serial port and use <code>921600</code> baud if available.</li>
+        <li>Set offset <code>0x0</code>, choose the merged image, and run the erase/program operation.</li>
+      </ol>
+      <p class="muted">A full erase/program clears saved device configuration. If auto-reset fails, hold BOOT (Button A), tap RESET, release BOOT, and reconnect.</p>
+      <h3>Command-line flash</h3>
       <pre>python -m esptool --chip esp32c3 --port COM11 --baud 921600 \
   --before usb_reset --after hard_reset \
   write_flash 0x0 build_output/webflasher/WCH_WebLink_ALL_at_0x0.bin</pre>
