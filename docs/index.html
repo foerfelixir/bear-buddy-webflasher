@@ -1,0 +1,263 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="color-scheme" content="dark">
+  <title>Bear-Buddy Web Flasher — Private Documentation</title>
+  <style>
+    :root {
+      --bg: #101216;
+      --panel: #181b21;
+      --panel-2: #1e222a;
+      --line: #2c323d;
+      --text: #d9dee8;
+      --muted: #929bad;
+      --strong: #f5f7fb;
+      --accent: #55b8ff;
+      --accent-2: #1677bd;
+      --ok: #62d38b;
+      --warn: #f0bd62;
+      --code: #0c0f13;
+      --radius: 14px;
+      --sans: Inter, ui-sans-serif, system-ui, -apple-system, "Segoe UI", sans-serif;
+      --mono: "Cascadia Mono", "JetBrains Mono", Consolas, monospace;
+    }
+    * { box-sizing: border-box; }
+    html { scroll-behavior: smooth; }
+    body { margin: 0; background: var(--bg); color: var(--text); font-family: var(--sans); line-height: 1.65; }
+    a { color: var(--accent); text-decoration: none; }
+    a:hover { text-decoration: underline; }
+    .wrap { width: min(1160px, calc(100% - 40px)); margin: 0 auto; }
+    header { padding: 56px 0 34px; border-bottom: 1px solid var(--line); background: radial-gradient(circle at 80% 0%, #16354b 0, transparent 42%); }
+    .eyebrow { color: var(--accent); font: 700 12px var(--mono); letter-spacing: .14em; text-transform: uppercase; }
+    h1 { margin: 12px 0 10px; color: var(--strong); font-size: clamp(34px, 5vw, 58px); line-height: 1.08; letter-spacing: -.035em; }
+    .lede { max-width: 780px; margin: 0; color: #b7c0ce; font-size: 18px; }
+    .badges { display: flex; flex-wrap: wrap; gap: 9px; margin-top: 24px; }
+    .badge { padding: 5px 11px; border: 1px solid var(--line); border-radius: 999px; background: #12151a; color: var(--muted); font: 600 12px var(--mono); }
+    .badge.private { color: var(--ok); border-color: #28563a; background: #12231a; }
+    .badge.unpublished { color: var(--warn); border-color: #5c4826; background: #241d12; }
+    nav { position: sticky; top: 0; z-index: 5; border-bottom: 1px solid var(--line); background: rgba(16, 18, 22, .94); backdrop-filter: blur(12px); }
+    nav .wrap { display: flex; gap: 20px; overflow-x: auto; padding: 13px 0; }
+    nav a { color: var(--muted); font-size: 13px; font-weight: 650; white-space: nowrap; }
+    nav a:hover { color: var(--strong); text-decoration: none; }
+    main { padding: 34px 0 70px; }
+    section { scroll-margin-top: 70px; margin: 0 0 42px; }
+    h2 { margin: 0 0 14px; color: var(--strong); font-size: 26px; letter-spacing: -.02em; }
+    h3 { margin: 22px 0 8px; color: var(--strong); font-size: 17px; }
+    p { margin: 0 0 14px; }
+    .muted { color: var(--muted); }
+    .grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 14px; }
+    .grid.two { grid-template-columns: repeat(2, 1fr); }
+    .card { padding: 20px; border: 1px solid var(--line); border-radius: var(--radius); background: var(--panel); }
+    .card h3 { margin-top: 0; }
+    .card p:last-child { margin-bottom: 0; }
+    .num { color: var(--accent); font: 700 12px var(--mono); letter-spacing: .08em; text-transform: uppercase; }
+    .flow { display: grid; grid-template-columns: 1fr auto 1fr auto 1fr; align-items: center; gap: 12px; }
+    .flow .node { padding: 18px; border: 1px solid var(--line); border-radius: 12px; background: var(--panel-2); text-align: center; }
+    .flow .node strong { display: block; color: var(--strong); }
+    .flow .arrow { color: var(--accent); font: 24px var(--mono); }
+    table { width: 100%; border-collapse: collapse; margin: 12px 0 20px; font-size: 14px; }
+    th, td { padding: 10px 12px; border-bottom: 1px solid var(--line); text-align: left; }
+    th { color: var(--muted); background: var(--panel-2); font-size: 12px; letter-spacing: .05em; text-transform: uppercase; }
+    td code { color: #c7e7ff; }
+    code { font-family: var(--mono); font-size: .92em; }
+    pre { margin: 12px 0; padding: 16px; overflow-x: auto; border: 1px solid var(--line); border-radius: 10px; background: var(--code); color: #d7e8f7; font: 13px/1.65 var(--mono); }
+    .callout { padding: 15px 17px; border: 1px solid #35516a; border-left: 4px solid var(--accent); border-radius: 10px; background: #12202b; }
+    .callout.warn { border-color: #5c4826; border-left-color: var(--warn); background: #241d12; }
+    .callout strong { color: var(--strong); }
+    .downloads { display: grid; grid-template-columns: repeat(2, 1fr); gap: 12px; }
+    .download { display: flex; flex-direction: column; gap: 5px; padding: 16px; border: 1px solid var(--line); border-radius: 12px; background: var(--panel); }
+    .download strong { color: var(--strong); }
+    .download span { color: var(--muted); font: 12px var(--mono); }
+    .download a { margin-top: 7px; font-weight: 700; }
+    ul { margin: 8px 0 16px; padding-left: 22px; }
+    li { margin: 5px 0; }
+    footer { padding: 26px 0; border-top: 1px solid var(--line); color: var(--muted); font-size: 13px; }
+    @media (max-width: 850px) {
+      .grid, .grid.two, .downloads { grid-template-columns: 1fr; }
+      .flow { grid-template-columns: 1fr; }
+      .flow .arrow { transform: rotate(90deg); text-align: center; }
+      header { padding-top: 38px; }
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <div class="wrap">
+      <div class="eyebrow">ESP32-C3 · CH32V003 · Bear-Buddy</div>
+      <h1>Web Flasher &amp; IR Remote Configurator</h1>
+      <p class="lede">A browser-hosted SWIO programmer, NEC/Samsung IR receiver, and three-button remote configurator for the TomatoCube Box 10 Bear-Buddy.</p>
+      <div class="badges">
+        <span class="badge private">PRIVATE REPOSITORY</span>
+        <span class="badge unpublished">PAGES NOT PUBLISHED</span>
+        <span class="badge">ESP32-C3</span>
+        <span class="badge">CH32V003J4M6</span>
+        <span class="badge">NEC / SAMSUNG</span>
+      </div>
+    </div>
+  </header>
+
+  <nav aria-label="Documentation sections">
+    <div class="wrap">
+      <a href="#overview">Overview</a>
+      <a href="#hardware">Hardware</a>
+      <a href="#build">Build &amp; flash</a>
+      <a href="#ir">IR protocols</a>
+      <a href="#api">API</a>
+      <a href="#limits">Limits</a>
+      <a href="#artifacts">Downloads</a>
+      <a href="#security">Security</a>
+    </div>
+  </nav>
+
+  <main class="wrap">
+    <section id="overview">
+      <h2>System overview</h2>
+      <div class="flow">
+        <div class="node"><strong>Browser</strong><span class="muted">HTTP + WebSocket</span></div>
+        <div class="arrow">→</div>
+        <div class="node"><strong>Bear-Buddy</strong><span class="muted">ESP32-C3 bridge</span></div>
+        <div class="arrow">→</div>
+        <div class="node"><strong>CH32V003</strong><span class="muted">SWIO target + IR TX</span></div>
+      </div>
+      <p style="margin-top:18px">The ESP32-C3 hosts the UI, bit-bangs SWIO on IO5, decodes IR on IO21, and renders received codes on the 5×5 NeoPixel matrix. The CH32V003 firmware only transmits IR; each of its three buttons can use NEC or Samsung independently.</p>
+      <div class="grid">
+        <div class="card"><div class="num">01 · Program</div><h3>Browser-based SWIO</h3><p>Detect, halt, write, flash firmware, inspect protection status, and erase through the local web UI.</p></div>
+        <div class="card"><div class="num">02 · Configure</div><h3>Per-button IR codes</h3><p>Edit, randomize, download, and program address, command, and protocol values without rebuilding.</p></div>
+        <div class="card"><div class="num">03 · Receive</div><h3>NEC / Samsung RX</h3><p>Decode IR in the ESP32, push frames to the page, and show a one-pass matrix marquee.</p></div>
+      </div>
+      <p class="muted" style="margin-top:14px">Detailed source notes: <a href="architecture.md">architecture.md</a> · <a href="../README.md">README</a></p>
+    </section>
+
+    <section id="hardware">
+      <h2>Hardware and wiring</h2>
+      <div class="grid two">
+        <div>
+          <table>
+            <thead><tr><th>Function</th><th>ESP32-C3</th></tr></thead>
+            <tbody>
+              <tr><td>SWIO / I²C SDA</td><td><code>IO5</code></td></tr>
+              <tr><td>I²C SCL</td><td><code>IO6</code></td></tr>
+              <tr><td>NeoPixel matrix</td><td><code>IO7</code></td></tr>
+              <tr><td>IR receiver</td><td><code>IO21</code></td></tr>
+              <tr><td>Button A / BOOT</td><td><code>IO9</code></td></tr>
+              <tr><td>Button B</td><td><code>IO4</code></td></tr>
+              <tr><td>Buzzer</td><td><code>IO10</code></td></tr>
+              <tr><td>Status LED</td><td><code>IO3</code></td></tr>
+            </tbody>
+          </table>
+        </div>
+        <div class="card">
+          <h3>SWIO checklist</h3>
+          <ul>
+            <li>Connect ESP32 IO5 to CH32V003 PD1 / SWIO.</li>
+            <li>Add a 10 kΩ pull-up and common ground.</li>
+            <li>Do not use I²C and SWIO at the same time; both use IO5.</li>
+            <li>Press a remote button before Detect or Program.</li>
+            <li>The target stays reachable for six seconds after wake.</li>
+          </ul>
+          <p class="muted">Target pins: SW1 PC4, SW2 PC2, SW3 PC1, IR output PA2 / TIM1_CH2N.</p>
+        </div>
+      </div>
+      <div class="callout warn"><strong>Power matters.</strong> Matrix updates plus WiFi bursts can exceed a weak USB supply. The firmware limits brightness and scrolls once, but a stable supply is still required.</div>
+      <p class="muted" style="margin-top:14px">Full pin map and power notes: <a href="hardware.md">hardware.md</a></p>
+    </section>
+
+    <section id="build">
+      <h2>Build, package, and flash</h2>
+      <p>Set <code>HOTSPOT_NAME</code> and <code>HOTSPOT_PASSWORD</code> in <code>src/SRLConfig.h</code>, then build the CH32V003 target below so its template is current before generating LittleFS. The ESP32 application and merged image are built locally and are not checked in.</p>
+      <h3>ESP32-C3 bridge</h3>
+      <pre>python -m platformio run -e esp32-c3-devkitc-02
+python -m platformio run -e esp32-c3-devkitc-02 -t buildfs
+mkdir -p build_output/webflasher
+cp .pio/build/esp32-c3-devkitc-02/bootloader.bin build_output/webflasher/bootloader_@0x0000.bin
+cp .pio/build/esp32-c3-devkitc-02/partitions.bin build_output/webflasher/partitions_@0x8000.bin
+cp .pio/build/esp32-c3-devkitc-02/firmware.bin build_output/webflasher/firmware_@0x10000.bin
+cp .pio/build/esp32-c3-devkitc-02/littlefs.bin build_output/webflasher/littlefs_@0x210000.bin
+python tools/merge_webflasher.py
+python tools/verify_artifacts.py</pre>
+      <h3>CH32V003 target</h3>
+      <pre>cd ch32v003-firmware
+TOOLCHAIN_DIR=/path/to/xpack-riscv-none-elf-gcc-15.2.0-1/bin sh build.sh
+node test_config_page.mjs</pre>
+      <h3>Flash the complete Bear-Buddy image</h3>
+      <pre>python -m esptool --chip esp32c3 --port COM11 --baud 921600 \
+  --before usb_reset --after hard_reset \
+  write_flash 0x0 build_output/webflasher/WCH_WebLink_ALL_at_0x0.bin</pre>
+      <p>For web-only changes, flash <code>littlefs_@0x210000.bin</code> at <code>0x210000</code>. The application is at <code>0x10000</code>.</p>
+      <div class="callout"><strong>Target programming:</strong> use the IR page for normal operation. The config page is at <code>0x08000800</code>; the complete target image starts at <code>0x08000000</code> and is 2112 bytes.</div>
+      <p class="muted" style="margin-top:14px">Complete instructions: <a href="build-and-flash.md">build-and-flash.md</a></p>
+    </section>
+
+    <section id="ir">
+      <h2>IR protocols and configuration</h2>
+      <table>
+        <thead><tr><th>Property</th><th>NEC</th><th>Samsung</th></tr></thead>
+        <tbody>
+          <tr><td>Header mark</td><td>9000 µs</td><td>4500 µs</td></tr>
+          <tr><td>Header space</td><td>4500 µs</td><td>4500 µs</td></tr>
+          <tr><td>Bit mark</td><td>560 µs</td><td>560 µs</td></tr>
+          <tr><td>Zero / one space</td><td>560 / 1690 µs</td><td>560 / 1690 µs</td></tr>
+          <tr><td>Second byte</td><td><code>~address</code></td><td><code>address</code></td></tr>
+          <tr><td>Order</td><td colspan="2">address bytes, command, <code>~command</code>; LSB first</td></tr>
+        </tbody>
+      </table>
+      <h3>IRC2 config page</h3>
+      <p>The 64-byte page at <code>0x08000800</code> stores magic <code>IRC2</code>, three four-byte button records, and a little-endian checksum over the first 16 bytes. Each record is <code>address, command, protocol, 0xFF</code>. Target protocol values are <code>0=NEC</code> and <code>1=Samsung</code>.</p>
+      <p>Blank, corrupt, old <code>IRC1</code>, or unsupported-protocol pages fall back to factory NEC commands 152, 31, and 62 at address <code>0x00</code>.</p>
+      <div class="callout warn"><strong>Verification:</strong> SWIO read-back is unreliable on this hardware. Verify target output with the Bear-Buddy receiver or an independent IR decoder.</div>
+      <p class="muted" style="margin-top:14px">Timing and byte layout: <a href="ir-protocols.md">ir-protocols.md</a></p>
+    </section>
+
+    <section id="api">
+      <h2>Web UI and API</h2>
+      <div class="grid two">
+        <div class="card"><h3>HTTP</h3><p><code>/</code> programmer UI<br><code>/ir.html</code> IR configurator<br><code>/rest/ir</code> receiver diagnostics<br><code>/rest/settings</code> device settings<br><code>/heap</code> free heap<br><code>/status</code> legacy status<br><code>/events</code> SSE</p></div>
+        <div class="card"><h3>WebSockets</h3><p><code>/wsflash</code> target programming<br><code>/wsir</code> received IR frames<br><code>/terminal</code> optional UART terminal</p><p class="muted">Numeric <code>/wsflash</code> arguments are decimal.</p></div>
+      </div>
+      <pre>#i;                       # chip info
+#r;134219776;64;          # read config page
+#w;134219776;64;          # write config page header
+#w;134217728;2112;        # write complete target image header
+#E;                       # whole-chip erase</pre>
+      <p><code>/rest/ir</code> exposes the last frame, receiver histogram, uptime, and reset reason. Common reset reasons: <code>6</code> task watchdog, <code>9</code> brownout, <code>4</code> panic.</p>
+      <p class="muted">Route and command reference: <a href="web-api.md">web-api.md</a></p>
+    </section>
+
+    <section id="limits">
+      <h2>Known limitations</h2>
+      <div class="grid">
+        <div class="card"><h3>SWIO reads</h3><p>Reads can return shifted or corrupted bytes. Writes are usable, but read-back is not proof.</p></div>
+        <div class="card"><h3>Standby</h3><p>The target is unreachable while asleep. Wake it with a button press before an on-demand operation.</p></div>
+        <div class="card"><h3>No USB console</h3><p>The blocking USB CDC console is intentionally removed. Do not expect COM11 debug output.</p></div>
+        <div class="card"><h3>Task watchdog</h3><p>Long interrupt-masked writes can starve the idle task. Explicit watchdog feeding between blocks is still open.</p></div>
+        <div class="card"><h3>IR scope</h3><p>The receiver supports NEC, extended NEC, and Samsung only. Extended addresses do not fit the target's 8-bit field.</p></div>
+        <div class="card"><h3>Power</h3><p>NeoPixel plus WiFi bursts can brown out a weak USB port. Brightness and one-pass scrolling are mitigations.</p></div>
+      </div>
+      <p class="muted" style="margin-top:14px">Diagnostic workflow: <a href="troubleshooting.md">troubleshooting.md</a></p>
+    </section>
+
+    <section id="artifacts">
+      <h2>Release downloads</h2>
+      <div class="downloads">
+        <div class="download"><strong>LittleFS web UI</strong><span>1,966,080 B · flash at 0x210000</span><a href="../build_output/webflasher/littlefs_@0x210000.bin">Download littlefs_@0x210000.bin</a></div>
+        <div class="download"><strong>CH32V003 target template</strong><span>2,112 B · firmware + blank config page</span><a href="../build_output/webflasher/ir_remote_template.bin">Download ir_remote_template.bin</a></div>
+      </div>
+      <div class="callout"><strong>Build the ESP32 image locally.</strong> The application and complete merged image are intentionally omitted because compiled firmware embeds Wi-Fi defaults. Follow <a href="build-and-flash.md">build-and-flash.md</a> to configure the access point and generate both binaries.</div>
+      <p class="muted" style="margin-top:14px">Hashes and verification: <a href="release-artifacts.md">release-artifacts.md</a></p>
+    </section>
+
+    <section id="security">
+      <h2>Private by design</h2>
+      <div class="callout warn"><strong>Not published.</strong> This repository is private and this documentation page has not been enabled through GitHub Pages.</div>
+      <p>No deployment Wi-Fi credentials are stored in current source, documentation, or checked-in binaries. The source uses generic setup placeholders, and ESP32 application/merged images are generated locally. Replace the placeholders before deployment and review repository history before any public release. The device has no authentication and should remain on a trusted local network.</p>
+      <p><a href="../SECURITY.md">Read the security and publication checklist</a>.</p>
+    </section>
+  </main>
+
+  <footer>
+    <div class="wrap">Bear-Buddy Web Flasher · Private documentation · Based on Subjective-Reality-Labs/WCH_WebLink · MIT license retained in <a href="../LICENSE">LICENSE</a>.</div>
+  </footer>
+</body>
+</html>

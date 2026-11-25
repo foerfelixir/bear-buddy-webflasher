@@ -1,0 +1,425 @@
+/*
+ * IR Remote Configurator — layout and components layered on top of
+ * styles/dashboard.css. Only the pieces the configurator needs live here;
+ * cards, buttons, badges, console, progress and toasts come from the
+ * shared stylesheet.
+ */
+
+/* ---------- column layout ---------- */
+.ir-workspace {
+  grid-template-columns: minmax(260px, 320px) minmax(420px, 1fr) minmax(300px, 360px);
+  align-items: start;
+}
+
+/* ---------- status chip states ---------- */
+.status-chip .dot {
+  width: 9px;
+  height: 9px;
+  border-radius: 50%;
+  background: var(--muted);
+  flex: none;
+}
+
+.status-chip[data-state="ok"]   { color: var(--ok);   background: var(--ok-soft);   border-color: #26512f; }
+.status-chip[data-state="ok"] .dot   { background: var(--ok); }
+.status-chip[data-state="warn"] { color: var(--warn); background: var(--warn-soft); border-color: #5c4715; }
+.status-chip[data-state="warn"] .dot { background: var(--warn); }
+.status-chip[data-state="err"]  { color: var(--err);  background: var(--err-soft);  border-color: #6b2b2d; }
+.status-chip[data-state="err"] .dot  { background: var(--err); }
+.status-chip[data-state="wait"] { color: var(--info); background: var(--accent-soft); border-color: #1d4d6b; }
+.status-chip[data-state="wait"] .dot {
+  background: var(--info);
+  animation: pulse 1.1s ease-in-out infinite;
+}
+/* Nothing is probing, so the page has no answer to give about the target. */
+.status-chip[data-state="idle"] { color: var(--muted); background: var(--bg-inset); border-color: var(--border); }
+.status-chip[data-state="idle"] .dot { background: var(--muted); }
+
+@keyframes pulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.25; } }
+
+/* ---------- the remote mockup ---------- */
+.remote {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  padding: 20px 18px 24px;
+  border-radius: 26px 26px 20px 20px;
+  background: linear-gradient(168deg, #34343a 0%, #232327 42%, #1b1b1f 100%);
+  border: 1px solid #46464d;
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.09), 0 10px 26px rgba(0, 0, 0, 0.5);
+}
+
+.remote-top {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 7px;
+}
+
+.remote-lens {
+  width: 40px;
+  height: 15px;
+  border-radius: 8px;
+  background: radial-gradient(ellipse at 50% 35%, #5b2430 0%, #2a0f16 60%, #170a0e 100%);
+  border: 1px solid #4a2028;
+  box-shadow: inset 0 -2px 4px rgba(0, 0, 0, 0.6);
+}
+
+.remote-lens[data-firing="true"] {
+  background: radial-gradient(ellipse at 50% 35%, #ffd9dd 0%, #ff4d5e 45%, #8c1220 100%);
+  border-color: #ff7a86;
+  box-shadow: 0 0 20px 5px rgba(255, 77, 94, 0.6);
+}
+
+.remote-top-label {
+  font-family: var(--mono);
+  font-size: 10.5px;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: #8b8b93;
+}
+
+.remote-btn {
+  display: grid;
+  grid-template-columns: 46px 1fr auto;
+  align-items: center;
+  gap: 12px;
+  width: 100%;
+  padding: 13px 15px;
+  border-radius: 14px;
+  border: 1px solid #4c4c54;
+  background: linear-gradient(180deg, #3d3d44 0%, #2b2b31 100%);
+  color: var(--text);
+  cursor: pointer;
+  text-align: left;
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.07), 0 3px 8px rgba(0, 0, 0, 0.38);
+  transition: transform 90ms, box-shadow 120ms, border-color 120ms;
+}
+
+.remote-btn:hover { border-color: #6a6a75; }
+.remote-btn:active { transform: translateY(2px); box-shadow: inset 0 2px 6px rgba(0, 0, 0, 0.55); }
+.remote-btn[aria-pressed="true"] { border-color: var(--accent); box-shadow: 0 0 0 2px var(--accent-soft), inset 0 1px 0 rgba(255,255,255,.07); }
+
+.remote-key {
+  display: grid;
+  place-items: center;
+  width: 46px;
+  height: 46px;
+  border-radius: 50%;
+  font-family: var(--mono);
+  font-size: 17px;
+  font-weight: 700;
+  color: #fff;
+  box-shadow: inset 0 -3px 6px rgba(0, 0, 0, 0.4);
+}
+
+.remote-key[data-sw="0"] { background: linear-gradient(180deg, #2f9be0, #1a6fa8); }
+.remote-key[data-sw="1"] { background: linear-gradient(180deg, #4cc46a, #2a8a45); }
+.remote-key[data-sw="2"] { background: linear-gradient(180deg, #e0a33a, #a8711c); }
+
+.remote-meta { display: flex; flex-direction: column; gap: 3px; min-width: 0; }
+.remote-name { font-size: 16px; font-weight: 700; color: var(--text-strong); }
+.remote-code { font-family: var(--mono); font-size: 13px; color: var(--muted); }
+.remote-pin  { font-family: var(--mono); font-size: 11px; color: #7d7d86; }
+
+/* ---------- per-button code editor ---------- */
+.code-card .card-head h2 { display: flex; align-items: center; gap: 10px; }
+
+.swatch {
+  display: grid;
+  place-items: center;
+  width: 26px;
+  height: 26px;
+  border-radius: 8px;
+  font-family: var(--mono);
+  font-size: 14px;
+  font-weight: 700;
+  color: #fff;
+}
+
+.swatch[data-sw="0"] { background: #1a6fa8; }
+.swatch[data-sw="1"] { background: #2a8a45; }
+.swatch[data-sw="2"] { background: #a8711c; }
+
+.fld-row { display: flex; gap: 8px; }
+.fld-row input[type="number"] { flex: 1 1 auto; min-width: 0; }
+
+.hex-in {
+  flex: 0 0 92px;
+  font-family: var(--mono);
+  text-transform: uppercase;
+  text-align: center;
+}
+
+/* The protocol choice belongs to the whole button, so it spans both columns. */
+.fld.span2 { grid-column: 1 / -1; }
+select.proto-in {
+  width: 100%;
+  padding: 0.5rem 0.65rem;
+  background: var(--bg-inset);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  color: var(--text-strong);
+  font: inherit; font-size: 0.95rem;
+  cursor: pointer;
+}
+select.proto-in:focus { outline: none; border-color: var(--accent); box-shadow: 0 0 0 2px var(--accent-soft); }
+
+input[type="range"] {
+  width: 100%;
+  height: 26px;
+  margin-top: 2px;
+  background: transparent;
+  accent-color: var(--accent);
+  cursor: pointer;
+}
+
+.code-actions { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 4px; }
+
+.code-summary {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  margin-top: 12px;
+  padding: 10px 13px;
+  border-radius: var(--radius-sm);
+  background: var(--bg-inset);
+  border: 1px solid var(--border-soft);
+  font-family: var(--mono);
+  font-size: 13.5px;
+}
+
+.code-summary .bytes { color: var(--info); letter-spacing: 0.03em; }
+.code-summary .dirty { color: var(--warn); font-family: var(--sans); font-size: 12px; font-weight: 600; }
+.code-summary .clean { color: var(--ok); font-family: var(--sans); font-size: 12px; font-weight: 600; }
+
+/* ---------- NEC waveform ---------- */
+.wave {
+  display: flex;
+  align-items: flex-end;
+  gap: 1px;
+  height: 86px;
+  padding: 8px 10px 10px;
+  border-radius: var(--radius-sm);
+  background: var(--bg-inset);
+  border: 1px solid var(--border-soft);
+  overflow: hidden;
+}
+
+.wave i {
+  display: block;
+  border-radius: 1px 1px 0 0;
+  min-width: 1px;
+}
+
+.wave i.mark  { height: 100%; background: linear-gradient(180deg, #ff7a86, #c22b3c); }
+.wave i.space { height: 30%;  background: #3a3a42; align-self: flex-end; }
+.wave i.hdr   { background: linear-gradient(180deg, #ffd08a, #b5761f); }
+
+.frame-hint {
+  display: flex;
+  justify-content: space-between;
+  margin-top: 6px;
+  font-family: var(--mono);
+  font-size: 11px;
+  color: #7d7d86;
+}
+
+/* ---------- constant-scan switch ---------- */
+.switch-row {
+  position: relative;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 11px 14px;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  background: var(--bg-inset);
+  cursor: pointer;
+}
+.switch-row:hover { border-color: var(--accent); }
+
+.switch-text { display: flex; flex-direction: column; gap: 2px; flex: 1; min-width: 0; }
+.switch-text strong { font-size: 14px; color: var(--text-strong); }
+.switch-text small { font-size: 12px; line-height: 1.45; color: var(--muted); }
+
+/* The checkbox holds the state and the focus ring; only the track is visible. */
+.switch-row input[type="checkbox"] {
+  position: absolute;
+  width: 1px; height: 1px;
+  margin: 0;
+  opacity: 0;
+}
+
+.switch-track {
+  position: relative;
+  flex: none;
+  width: 44px; height: 24px;
+  border: 1px solid var(--border);
+  border-radius: 999px;
+  background: var(--bg-raise);
+  transition: background 140ms, border-color 140ms;
+}
+.switch-knob {
+  position: absolute;
+  top: 2px; left: 2px;
+  width: 18px; height: 18px;
+  border-radius: 50%;
+  background: var(--muted);
+  transition: transform 140ms, background 140ms;
+}
+.switch-row input:checked + .switch-track { background: var(--accent); border-color: var(--accent); }
+.switch-row input:checked + .switch-track .switch-knob { transform: translateX(20px); background: #fff; }
+.switch-row input:focus-visible + .switch-track { border-color: var(--accent); box-shadow: 0 0 0 2px var(--accent-soft); }
+/* Locked while an operation owns the bridge. */
+.switch-row:has(input:disabled) { cursor: not-allowed; border-color: var(--border); }
+.switch-row input:disabled + .switch-track { opacity: 0.45; }
+
+/* ---------- wake guidance ---------- */
+.wake-box {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  padding: 13px 15px;
+  margin-bottom: 14px;
+  border-radius: var(--radius-sm);
+  border: 1px solid #5c4715;
+  border-left: 4px solid var(--warn);
+  background: var(--warn-soft);
+  font-size: 13.5px;
+  line-height: 1.5;
+}
+
+.wake-box strong { color: var(--warn); font-size: 14px; }
+.wake-box span { color: var(--text); }
+
+.wake-box[data-state="ok"] {
+  border-color: #26512f;
+  border-left-color: var(--ok);
+  background: var(--ok-soft);
+}
+.wake-box[data-state="ok"] strong { color: var(--ok); }
+
+/* Scan off is not a fault - the page simply is not asking. */
+.wake-box[data-state="off"] {
+  border-color: var(--border);
+  border-left-color: var(--muted);
+  background: var(--bg-inset);
+}
+.wake-box[data-state="off"] strong { color: var(--text-strong); }
+
+/* ---------- generated image preview ---------- */
+.gen-hex {
+  margin: 0 0 12px;
+  padding: 10px 12px;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  background: var(--bg-inset);
+  color: var(--muted);
+  font-size: 11.5px;
+  line-height: 1.7;
+  white-space: pre;
+  overflow-x: auto;
+}
+
+/* ---------- primary action ---------- */
+.action-primary {
+  border-color: var(--accent);
+  background: linear-gradient(180deg, #1489d6, #0c6aa8);
+  color: #fff;
+}
+.action-primary:hover { border-color: #3aa3e6; background: linear-gradient(180deg, #1a97e6, #0e76b8); }
+.action-primary .action-hint { color: rgba(255, 255, 255, 0.78); }
+
+/* ---------- responsive ---------- */
+@media (max-width: 1240px) {
+  .ir-workspace { grid-template-columns: minmax(260px, 320px) minmax(380px, 1fr); }
+  .ir-workspace > .panel:last-child { grid-column: 1 / -1; }
+  .topnav { order: 3; margin-inline: 0; }
+}
+
+@media (max-width: 820px) {
+  .ir-workspace { grid-template-columns: 1fr; }
+  .topbar { flex-wrap: wrap; }
+}
+
+/* ---------- bridge IR receiver ---------- */
+.badge.rx-on { color: var(--ok); background: var(--ok-soft); border-color: var(--ok); }
+.badge.rx-off { color: var(--muted); background: var(--bg-inset); border-color: var(--border); }
+
+.rx-now {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+  margin: 0 0 12px;
+}
+.rx-block {
+  flex: 1 1 88px;
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+  padding: 10px 12px;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  background: var(--bg-inset);
+}
+.rx-label {
+  font-size: 10px;
+  letter-spacing: .09em;
+  text-transform: uppercase;
+  color: var(--muted);
+}
+.rx-value {
+  font-family: var(--mono);
+  font-size: 21px;
+  font-weight: 600;
+  color: var(--text-strong);
+}
+.rx-empty { color: var(--muted); font-size: 12.5px; padding: 6px 0; }
+
+.rx-history {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+  max-height: 220px;
+  overflow-y: auto;
+}
+.rx-item {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  padding: 6px 9px;
+  border: 1px solid var(--border-soft);
+  border-radius: var(--radius-sm);
+  background: var(--bg-raise);
+}
+.rx-item code {
+  font-family: var(--mono);
+  font-size: 12.5px;
+  font-weight: 600;
+  color: var(--accent);
+}
+.rx-meta {
+  flex: 1;
+  font-family: var(--mono);
+  font-size: 10.5px;
+  color: var(--muted);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.rx-use {
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  background: var(--bg-inset);
+  color: var(--text);
+  font: inherit;
+  font-size: 11px;
+  padding: 3px 9px;
+  cursor: pointer;
+}
+.rx-use:hover { border-color: var(--accent); color: var(--accent); }

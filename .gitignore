@@ -1,0 +1,18 @@
+# PlatformIO / build outputs
+.pio/
+.vscode/
+*.log
+
+# Target intermediate files; release binaries are kept intentionally
+ch32v003-firmware/build/*.o
+ch32v003-firmware/build/*.elf
+ch32v003-firmware/build/*.map
+
+# ESP32 images embed Wi-Fi defaults and are generated locally
+build_output/webflasher/firmware_@0x10000.bin
+build_output/webflasher/WCH_WebLink_ALL_at_0x0.bin
+
+# Device-local state and editor files
+config.json
+.DS_Store
+Thumbs.db

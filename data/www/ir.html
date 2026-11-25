@@ -1,0 +1,241 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>IR Remote Configurator &middot; CH32V003</title>
+  <link rel="icon" type="image/png" href="images/icon.png" />
+  <link rel="apple-touch-icon" href="images/icon.png" />
+  <link rel="stylesheet" href="styles/dashboard.css" />
+  <link rel="stylesheet" href="styles/ir.css" />
+</head>
+<body>
+  <header class="topbar">
+    <div class="brand">
+      <svg class="brand-mark" viewBox="0 0 24 24" aria-hidden="true">
+        <path d="M12 5a7 7 0 0 1 7 7M12 9a3 3 0 0 1 3 3" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/>
+        <circle cx="12" cy="12" r="1.6" fill="currentColor"/>
+        <path d="M5 12a7 7 0 0 1 2-4.9M19 12a7 7 0 0 0-2-4.9" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" opacity=".55"/>
+      </svg>
+      <div class="brand-text">
+        <h1>IR Remote Configurator</h1>
+        <p class="brand-sub">CH32V003J4M6 &middot; three-button NEC or Samsung remote &middot; programmed over SWIO</p>
+      </div>
+    </div>
+
+    <nav class="topnav" aria-label="Sections">
+      <a href="/">Programmer</a>
+      <a href="ir.html" aria-current="page">IR Remote</a>
+    </nav>
+
+    <div class="topbar-status">
+      <span class="status-chip" id="link-status" title="WebSocket link to the Bear-Buddy bridge">
+        <i class="dot"></i><span data-text>bridge offline</span>
+      </span>
+      <span class="status-chip" id="target-status" data-state="idle" title="SWIO reachability of the CH32V003">
+        <i class="dot"></i><span data-text>scan off</span>
+      </span>
+      <span class="status-chip" id="target-chip" title="Chip reported by the bridge">
+        <span data-text>no chip</span>
+      </span>
+    </div>
+  </header>
+
+  <main class="workspace ir-workspace">
+
+    <!-- ============ LEFT: the physical remote ============ -->
+    <section class="panel">
+      <div class="card">
+        <div class="card-head">
+          <h2>Remote</h2>
+          <button class="card-toggle" type="button" data-collapse aria-expanded="true" aria-label="Collapse">&minus;</button>
+        </div>
+        <div class="card-body">
+          <div class="remote" id="remote">
+            <div class="remote-top">
+              <span class="remote-lens" id="remote-lens" aria-hidden="true"></span>
+              <span class="remote-top-label">IR LED + indicator &middot; PA2 &middot; 38 kHz</span>
+            </div>
+            <!-- buttons injected by ir.js -->
+          </div>
+          <p class="note">
+            Tap a button to preview its frame below. Pressing the real button sends
+            that code, in the protocol chosen on its card, and repeats every
+            200&nbsp;ms while held.
+          </p>
+          <div class="row-btns">
+            <button class="btn" type="button" id="btn-random-all">
+              <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 5h4l10 10v4h-4L5 9V5Z" fill="currentColor" opacity=".85"/><circle cx="8" cy="17" r="1.4" fill="currentColor"/><circle cx="16" cy="7" r="1.4" fill="currentColor"/><path d="M5 19h4l3-3M15 8l4-4v4" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg>
+              Randomize all
+            </button>
+            <button class="btn" type="button" id="btn-factory">
+              <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 12a8 8 0 1 1 2.3 5.6" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/><path d="M4 18v-5h5" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
+              Factory codes
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card-head">
+          <h2>Frame</h2>
+          <button class="card-toggle" type="button" data-collapse aria-expanded="true" aria-label="Collapse">&minus;</button>
+        </div>
+        <div class="card-body">
+          <p class="section-title" id="frame-title">SW1 &middot; PC4</p>
+          <div class="wave" id="wave" aria-hidden="true"></div>
+          <dl class="kv" id="frame-stats"></dl>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card-head">
+          <h2>IR receiver</h2>
+          <span class="badge rx-off" id="rx-badge">offline</span>
+          <button class="card-toggle" type="button" data-collapse aria-expanded="true" aria-label="Collapse">&minus;</button>
+        </div>
+        <div class="card-body">
+          <p class="note">
+            Bear-Buddy listens on its own 38&nbsp;kHz receiver (IO21) while you
+            work. Every decoded frame &mdash; NEC, extended NEC or Samsung &mdash;
+            scrolls &ldquo;IR:&rdquo; plus the code across the 5&times;5 matrix and
+            lands here with its protocol and address. Button&nbsp;A clears the
+            matrix, Button&nbsp;B replays the last code. Assigning a frame also
+            switches that button to the protocol it arrived on, so a Samsung code
+            drives the Samsung set that sent it.
+          </p>
+          <div class="rx-now" id="rx-now" aria-live="polite">
+            <span class="rx-empty">no code received yet</span>
+          </div>
+          <dl class="kv compact" id="rx-detail"></dl>
+          <div class="row-btns">
+            <button class="btn" type="button" id="btn-rx-assign">Send to selected button</button>
+            <button class="btn" type="button" id="btn-rx-clear">Clear</button>
+          </div>
+          <h3 class="section-title">History</h3>
+          <ol class="rx-history" id="rx-history"></ol>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============ CENTRE: per-button code editors ============ -->
+    <section class="panel" id="code-panel">
+      <!-- three .code-card articles injected by ir.js -->
+    </section>
+
+    <!-- ============ RIGHT: generate, then device ============ -->
+    <section class="panel">
+      <div class="card">
+        <div class="card-head">
+          <h2>1 &middot; Generate</h2>
+          <span class="badge" id="gen-badge">&mdash;</span>
+          <button class="card-toggle" type="button" data-collapse aria-expanded="true" aria-label="Collapse">&minus;</button>
+        </div>
+        <div class="card-body">
+          <p class="note">
+            The image is built here in the browser from the codes on screen, never read
+            back from the chip. A read-protected CH32V003 does not answer a flash read
+            at all, so download the image and prove the remote works with your own
+            programmer before trusting this link to write it. A Samsung button also
+            needs the firmware inside this image: a remote still running the older
+            NEC-only build rejects the new &ldquo;IRC2&rdquo; page and falls back to its
+            factory NEC codes, so run Flash firmware once after picking a protocol.
+          </p>
+          <dl class="kv compact" id="gen-summary"></dl>
+          <pre class="mono gen-hex" id="gen-page" aria-label="Generated config page bytes"></pre>
+          <div class="row-btns">
+            <button class="btn primary" type="button" id="btn-download">
+              <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3v11M8 10l4 4 4-4" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"/><path d="M4 17v2a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-2" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round"/></svg>
+              Download image (.bin)
+            </button>
+            <button class="btn" type="button" id="btn-download-hex">HEX</button>
+            <button class="btn" type="button" id="btn-download-page">Config page only</button>
+          </div>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card-head">
+          <h2>2 &middot; Device</h2>
+          <button class="card-toggle" type="button" data-collapse aria-expanded="true" aria-label="Collapse">&minus;</button>
+        </div>
+        <div class="card-body">
+          <label class="switch-row" for="scan-toggle">
+            <span class="switch-text">
+              <strong>Constant chip scan</strong>
+              <small>probe the CH32V003 every 2 s so this page can report whether it is awake</small>
+            </span>
+            <input type="checkbox" id="scan-toggle" role="switch" aria-label="Constant chip scan" />
+            <span class="switch-track" aria-hidden="true"><span class="switch-knob"></span></span>
+          </label>
+
+          <div class="wake-box" id="wake-box" data-state="off">
+            <strong>Constant chip scan is off.</strong>
+            <span id="wake-text">
+              Nothing is polling the CH32V003. Press a button on the remote to open its
+              6-second SWIO window, then click Detect chip or Program codes before it
+              closes &mdash; once SWIO is moving, that window stays open. Switch the scan on
+              to have this page hold it open for you.
+            </span>
+          </div>
+
+          <div class="action-list">
+            <button class="action" type="button" id="btn-detect">
+              <svg viewBox="0 0 24 24" aria-hidden="true"><rect x="4" y="4" width="16" height="16" rx="3" fill="none" stroke="currentColor" stroke-width="1.8"/><path d="M9 1v3M15 1v3M9 20v3M15 20v3M1 9h3M1 15h3M20 9h3M20 15h3" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg>
+              <span class="action-label">Detect chip</span>
+              <span class="action-hint">identity, option bytes, protection</span>
+            </button>
+            <button class="action action-primary" type="button" id="btn-program">
+              <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M13 2 4 14h6l-1 8 9-12h-6l1-8Z" fill="currentColor"/></svg>
+              <span class="action-label">Program codes</span>
+              <span class="action-hint">writes the 64-byte page &mdash; firmware untouched</span>
+            </button>
+            <button class="action" type="button" id="btn-read">
+              <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 4v11M8 11l4 4 4-4" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"/><path d="M4 18h16" stroke="currentColor" stroke-width="1.9" stroke-linecap="round"/></svg>
+              <span class="action-label">Read back</span>
+              <span class="action-hint">only answers when the chip is not protected</span>
+            </button>
+          </div>
+
+          <h3 class="section-title">Recovery</h3>
+          <div class="action-list">
+            <button class="action" type="button" id="btn-firmware">
+              <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 20V8M8 12l4-4 4 4" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"/><path d="M4 4h16" stroke="currentColor" stroke-width="1.9" stroke-linecap="round"/></svg>
+              <span class="action-label">Flash firmware</span>
+              <span class="action-hint">replace all 33 pages with the generated image</span>
+            </button>
+            <button class="action danger" type="button" id="btn-unbrick">
+              <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 7h16M9 7V5h6v2M6 7l1 13h10l1-13M10 11v6M14 11v6" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
+              <span class="action-label">Unbrick / erase</span>
+              <span class="action-hint">whole-chip erase, clears read protection</span>
+            </button>
+          </div>
+
+          <div class="progress" id="progress" hidden>
+            <div class="progress-track"><div class="progress-bar" id="progress-bar"></div></div>
+            <p class="progress-meta" id="progress-meta"></p>
+          </div>
+
+          <dl class="kv" id="device-info"></dl>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card-head">
+          <h2>Console</h2>
+          <div class="tab-tool">
+            <button class="btn" type="button" id="btn-clear-log">Clear</button>
+            <button class="card-toggle" type="button" data-collapse aria-expanded="true" aria-label="Collapse">&minus;</button>
+          </div>
+        </div>
+        <div class="card-body">
+          <div class="console" id="console" role="log" aria-live="polite"></div>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <div class="toasts" id="toasts" aria-live="polite"></div>
+  <script src="js/ir.js"></script>
+</body>
+</html>

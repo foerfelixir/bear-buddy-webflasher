@@ -1,0 +1,44 @@
+name: Verify artifacts
+
+on:
+  push:
+  pull_request:
+
+jobs:
+  verify:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.x"
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+
+      - name: Install PlatformIO
+        run: python -m pip install platformio
+
+      - name: Build ESP32 application and filesystem
+        run: |
+          python -m platformio run -e esp32-c3-devkitc-02
+          python -m platformio run -e esp32-c3-devkitc-02 -t buildfs
+
+      - name: Stage PlatformIO outputs
+        run: |
+          mkdir -p build_output/webflasher
+          cp .pio/build/esp32-c3-devkitc-02/bootloader.bin build_output/webflasher/bootloader_@0x0000.bin
+          cp .pio/build/esp32-c3-devkitc-02/partitions.bin build_output/webflasher/partitions_@0x8000.bin
+          cp .pio/build/esp32-c3-devkitc-02/firmware.bin build_output/webflasher/firmware_@0x10000.bin
+          cp .pio/build/esp32-c3-devkitc-02/littlefs.bin build_output/webflasher/littlefs_@0x210000.bin
+
+      - name: Build merged image
+        run: python tools/merge_webflasher.py
+
+      - name: Verify release artifacts and IR config contract
+        run: python tools/verify_artifacts.py

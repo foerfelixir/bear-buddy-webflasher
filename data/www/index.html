@@ -1,0 +1,293 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="wifi" content="%WIFI%" />
+    <title>ESP32-S3 CH32 Programmer</title>
+    <link rel="icon" type="image/png" href="images/icon.png" />
+    <link rel="apple-touch-icon" href="images/icon.png" />
+    <link rel="stylesheet" href="styles/dashboard.css" />
+  </head>
+  <body>
+    <header class="topbar">
+      <div class="brand">
+        <svg class="brand-mark" viewBox="0 0 24 24" aria-hidden="true">
+          <path d="M9 3H5a2 2 0 0 0-2 2v4m6-6h10a2 2 0 0 1 2 2v4M9 3v18m0 0h10a2 2 0 0 0 2-2v-4M9 21H5a2 2 0 0 1-2-2v-4m0 0h18M3 12h18" />
+        </svg>
+        <div class="brand-text">
+          <h1>ESP32-S3 CH32 Programmer</h1>
+          <p class="brand-sub">SWIO bridge &middot; WCH WebLink firmware</p>
+        </div>
+      </div>
+
+      <nav class="topnav" aria-label="Sections">
+        <a href="/" aria-current="page">Programmer</a>
+        <a href="ir.html">IR Remote</a>
+      </nav>
+
+      <div class="topbar-status">
+        <div class="status-chip" id="link-status" data-state="off">
+          <span class="dot"></span>
+          <span class="status-label" id="link-status-label">Disconnected</span>
+        </div>
+
+        <div class="field">
+          <label for="target-chip">Target chip</label>
+          <output id="target-chip" class="field-value">&mdash; not detected &mdash;</output>
+        </div>
+
+        <div class="field">
+          <label for="bridge-mode">Bridge mode</label>
+          <output id="bridge-mode" class="field-value">&mdash;</output>
+        </div>
+      </div>
+    </header>
+
+    <main class="workspace">
+      <!-- LEFT: actions -->
+      <aside class="panel" aria-label="Actions">
+        <div class="card" data-card>
+          <button class="card-head" type="button" data-collapse>
+            <h2>Actions</h2>
+            <svg class="chev" viewBox="0 0 16 16" aria-hidden="true"><path d="M4 6l4 4 4-4" /></svg>
+          </button>
+          <div class="card-body">
+            <div class="action-list">
+              <button class="action" id="btn-detect" type="button">
+                <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="11" cy="11" r="7" /><path d="M20 20l-3.5-3.5" /></svg>
+                <span class="action-label">Detect Chip</span>
+                <span class="action-hint">read identity &amp; option bytes</span>
+              </button>
+
+              <button class="action" id="btn-read" type="button">
+                <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3v12m0 0l-4-4m4 4l4-4" /><path d="M4 17v2a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-2" /></svg>
+                <span class="action-label">Read Flash</span>
+                <span class="action-hint">dump memory to browser</span>
+              </button>
+
+              <button class="action" id="btn-program" type="button">
+                <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 21V9m0 0l-4 4m4-4l4 4" /><path d="M4 7V5a2 2 0 0 1 2-2h12a2 2 0 0 1 2 2v2" /></svg>
+                <span class="action-label">Program Flash</span>
+                <span class="action-hint">write a binary image</span>
+              </button>
+
+              <button class="action" id="btn-verify" type="button">
+                <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3l7 3v6c0 4.2-2.9 7.9-7 9-4.1-1.1-7-4.8-7-9V6z" /><path d="M9 12l2 2 4-4" /></svg>
+                <span class="action-label">Verify Flash</span>
+                <span class="action-hint">read back and compare</span>
+              </button>
+
+              <button class="action danger" id="btn-erase" type="button">
+                <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 7h16M9 7V5h6v2M6 7l1 13h10l1-13" /><path d="M10 11v6M14 11v6" /></svg>
+                <span class="action-label">Erase Chip</span>
+                <span class="action-hint">full flash erase</span>
+              </button>
+
+              <button class="action" id="btn-reset" type="button">
+                <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M20 12a8 8 0 1 1-2.3-5.7" /><path d="M20 4v4h-4" /></svg>
+                <span class="action-label">Reset Device</span>
+                <span class="action-hint">reboot target and run</span>
+              </button>
+            </div>
+            <input type="file" id="firmware-file" class="visually-hidden" accept=".bin,.hex,application/octet-stream" />
+          </div>
+        </div>
+
+        <div class="card collapsed" data-card>
+          <button class="card-head" type="button" data-collapse>
+            <h2>Bridge Settings</h2>
+            <svg class="chev" viewBox="0 0 16 16" aria-hidden="true"><path d="M4 6l4 4 4-4" /></svg>
+          </button>
+          <div class="card-body">
+            <div class="form-grid">
+              <label class="fld"><span>SWIO pin</span><input type="number" id="set-swio" min="-1" max="48" /></label>
+              <label class="fld"><span>t1coeff</span><input type="number" id="set-t1" min="0" max="999" /></label>
+              <label class="fld"><span>3.3V ctrl pin</span><input type="number" id="set-3v3" min="-1" max="48" /></label>
+              <label class="fld"><span>Poll delay (ms)</span><input type="number" id="set-poll" min="0" max="65535" /></label>
+            </div>
+            <div class="row-btns">
+              <button class="btn" id="btn-settings-load" type="button">Reload</button>
+              <button class="btn primary" id="btn-settings-save" type="button">Save</button>
+            </div>
+            <p class="note">Saved to the bridge&rsquo;s own flash; it restarts its link settings immediately.</p>
+          </div>
+        </div>
+      </aside>
+
+      <!-- CENTRE: chip information -->
+      <section class="panel" aria-label="Chip information">
+        <div class="card" data-card>
+          <button class="card-head" type="button" data-collapse>
+            <h2>Chip Information</h2>
+            <span class="badge idle" id="chip-badge">awaiting detection</span>
+            <svg class="chev" viewBox="0 0 16 16" aria-hidden="true"><path d="M4 6l4 4 4-4" /></svg>
+          </button>
+          <div class="card-body">
+            <dl class="kv" id="chip-summary">
+              <div><dt>Device</dt><dd data-k="device">&mdash;</dd></div>
+              <div><dt>Flash size</dt><dd data-k="flashSize">&mdash;</dd></div>
+              <div><dt>Unique ID</dt><dd data-k="uniqueId" class="mono">&mdash;</dd></div>
+              <div><dt>Read protection</dt><dd data-k="rdprState">&mdash;</dd></div>
+              <div><dt>User option byte</dt><dd data-k="user" class="mono">&mdash;</dd></div>
+            </dl>
+
+            <h3 class="section-title">Protection status</h3>
+            <ul class="status-list" id="protection-status">
+              <li data-s="swio"><span class="mark">&ndash;</span> SWIO link not probed</li>
+            </ul>
+
+            <div class="two-col">
+              <div>
+                <h3 class="section-title">Option bytes</h3>
+                <dl class="kv compact">
+                  <div><dt>RDPR</dt><dd data-k="rdpr" class="mono">&mdash;</dd></div>
+                  <div><dt>DATA0</dt><dd data-k="data0" class="mono">&mdash;</dd></div>
+                  <div><dt>DATA1</dt><dd data-k="data1" class="mono">&mdash;</dd></div>
+                </dl>
+              </div>
+              <div>
+                <h3 class="section-title">Write protection</h3>
+                <dl class="kv compact">
+                  <div><dt>WRPR0</dt><dd data-k="wrpr0" class="mono">&mdash;</dd></div>
+                  <div><dt>WRPR1</dt><dd data-k="wrpr1" class="mono">&mdash;</dd></div>
+                  <div><dt>WRPR2</dt><dd data-k="wrpr2" class="mono">&mdash;</dd></div>
+                  <div><dt>WRPR3</dt><dd data-k="wrpr3" class="mono">&mdash;</dd></div>
+                </dl>
+              </div>
+            </div>
+            <p class="note" id="chip-note">Press <strong>Detect Chip</strong> to query the target over SWIO.</p>
+          </div>
+        </div>
+
+        <div class="card" data-card>
+          <button class="card-head" type="button" data-collapse>
+            <h2>Last Operation</h2>
+            <span class="badge idle" id="op-badge">idle</span>
+            <svg class="chev" viewBox="0 0 16 16" aria-hidden="true"><path d="M4 6l4 4 4-4" /></svg>
+          </button>
+          <div class="card-body">
+            <dl class="kv" id="op-summary">
+              <div><dt>Operation</dt><dd data-k="op">&mdash;</dd></div>
+              <div><dt>Range</dt><dd data-k="range" class="mono">&mdash;</dd></div>
+              <div><dt>Bytes</dt><dd data-k="bytes">&mdash;</dd></div>
+              <div><dt>Duration</dt><dd data-k="duration">&mdash;</dd></div>
+              <div><dt>Result</dt><dd data-k="result">&mdash;</dd></div>
+            </dl>
+          </div>
+        </div>
+      </section>
+
+      <!-- RIGHT: memory operations -->
+      <aside class="panel" aria-label="Memory operations">
+        <div class="card" data-card>
+          <button class="card-head" type="button" data-collapse>
+            <h2>Memory Operations</h2>
+            <svg class="chev" viewBox="0 0 16 16" aria-hidden="true"><path d="M4 6l4 4 4-4" /></svg>
+          </button>
+          <div class="card-body">
+            <label class="fld block">
+              <span>Start address</span>
+              <input type="text" id="in-offset" class="mono" value="0x08000000" spellcheck="false" />
+            </label>
+            <div class="presets" role="group" aria-label="Address presets">
+              <button class="chip-btn" type="button" data-offset="0x08000000">flash</button>
+              <button class="chip-btn" type="button" data-offset="0x1FFFF000">boot</button>
+              <button class="chip-btn" type="button" data-offset="0x1FFFF800">option</button>
+              <button class="chip-btn" type="button" data-offset="0x20000000">ram</button>
+            </div>
+
+            <label class="fld block">
+              <span>Length (bytes)</span>
+              <input type="number" id="in-length" class="mono" value="16384" min="1" max="16384" step="1" />
+            </label>
+            <p class="note">Bridge buffer limit: <strong>16384</strong> bytes per transfer.</p>
+
+            <button class="btn primary block-btn" id="btn-read-flash" type="button">Read Flash</button>
+
+            <div class="progress" id="progress" hidden>
+              <div class="progress-track"><div class="progress-bar" id="progress-bar"></div></div>
+              <div class="progress-meta">
+                <span id="progress-label">idle</span>
+                <span id="progress-pct">0%</span>
+              </div>
+            </div>
+
+            <div class="result-block" id="read-result" hidden>
+              <h3 class="section-title">Read result</h3>
+              <dl class="kv compact">
+                <div><dt>Bytes read</dt><dd id="rr-bytes">&mdash;</dd></div>
+                <div><dt>From</dt><dd id="rr-from" class="mono">&mdash;</dd></div>
+                <div><dt>Checksum</dt><dd id="rr-sum" class="mono">&mdash;</dd></div>
+                <div><dt>Content</dt><dd id="rr-content">&mdash;</dd></div>
+              </dl>
+              <div class="row-btns">
+                <button class="btn" id="btn-save-bin" type="button">Download BIN</button>
+                <button class="btn" id="btn-save-hex" type="button">Save HEX</button>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="card" data-card>
+          <button class="card-head" type="button" data-collapse>
+            <h2>Image</h2>
+            <svg class="chev" viewBox="0 0 16 16" aria-hidden="true"><path d="M4 6l4 4 4-4" /></svg>
+          </button>
+          <div class="card-body">
+            <dl class="kv compact">
+              <div><dt>Loaded file</dt><dd id="img-name">&mdash;</dd></div>
+              <div><dt>Size</dt><dd id="img-size">&mdash;</dd></div>
+              <div><dt>Verify state</dt><dd id="img-verify"><span class="badge idle">not verified</span></dd></div>
+            </dl>
+            <button class="btn block-btn" id="btn-pick" type="button">Choose binary&hellip;</button>
+          </div>
+        </div>
+      </aside>
+    </main>
+
+    <!-- BOTTOM: tabbed output -->
+    <section class="bottom" aria-label="Output">
+      <div class="tabs" role="tablist">
+        <button class="tab active" role="tab" data-tab="console" aria-selected="true">Console Log</button>
+        <button class="tab" role="tab" data-tab="hex" aria-selected="false">Flash Viewer</button>
+        <button class="tab" role="tab" data-tab="opt" aria-selected="false">Option Bytes</button>
+        <span class="tabs-spacer"></span>
+        <button class="tab-tool" id="btn-clear-log" type="button">clear</button>
+      </div>
+
+      <div class="tab-panel active" data-panel="console" role="tabpanel">
+        <pre class="console" id="console" aria-live="polite"></pre>
+      </div>
+
+      <div class="tab-panel" data-panel="hex" role="tabpanel">
+        <div class="hex-toolbar">
+          <span id="hex-meta">no data</span>
+          <span class="tabs-spacer"></span>
+          <label class="fld inline"><span>Rows</span>
+            <input type="number" id="hex-rows" value="256" min="16" max="1024" step="16" />
+          </label>
+          <button class="btn sm" id="btn-hex-render" type="button">Render</button>
+        </div>
+        <div class="hex-scroll">
+          <pre class="hexview" id="hexview"></pre>
+        </div>
+      </div>
+
+      <div class="tab-panel" data-panel="opt" role="tabpanel">
+        <table class="table" id="opt-table">
+          <thead>
+            <tr><th>Register</th><th>Value</th><th>Address</th><th>Meaning</th></tr>
+          </thead>
+          <tbody>
+            <tr><td colspan="4" class="empty">No option byte data yet &mdash; run <strong>Detect Chip</strong>.</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <div class="toasts" id="toasts" aria-live="polite"></div>
+
+    <script type="module" src="js/dashboard.js"></script>
+  </body>
+</html>
